@@ -5,6 +5,7 @@ using horolog_api.Features.Tokens;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
+using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,6 +24,9 @@ builder.Services.AddSingleton<IWatchRecordsService, WatchRecordsService>();
 builder.Services.AddSingleton<IUsersRepository, UsersRepository>();
 builder.Services.AddSingleton<IUsersService, UsersService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddSingleton<IWatchReportsRepository, WatchReportsRepository>();
+builder.Services.AddSingleton<IWatchReportsService, WatchReportsService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -65,6 +69,7 @@ app.UseHttpsRedirection();
 app.MapBrands();
 app.MapWatchModels();
 app.MapWatchRecords();
+app.MapWatchReports();
 app.MapUsers();
 
 app.UseCors("AllowSpecificOrigins");

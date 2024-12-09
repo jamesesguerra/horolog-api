@@ -90,6 +90,16 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
         return affectedRows;
     }
+
+    public async Task<int> GetWatchRecordsCount()
+    {
+        using var connection = context.CreateConnection();
+        
+        var sql = " SELECT COUNT(*) FROM WatchRecord WHERE DateSold IS NULL AND DateBorrowed IS NULL ";
+        
+        var count = await connection.ExecuteScalarAsync<int>(sql);
+        return count;
+    }
     
     #region private methods
     private DynamicParameters BuildDynamicPatchParams(WatchRecord resource, StringBuilder queryBuilder)

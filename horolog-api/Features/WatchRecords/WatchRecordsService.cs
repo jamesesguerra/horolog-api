@@ -28,4 +28,9 @@ public class WatchRecordsService(IWatchRecordsRepository repository) : IWatchRec
     {
         return await repository.DeleteWatchRecord(id);
     }
+
+    public async Task<int> GetWatchRecordsCount()
+    {
+        return await repository.GetWatchRecordsCount();
+    }
 }

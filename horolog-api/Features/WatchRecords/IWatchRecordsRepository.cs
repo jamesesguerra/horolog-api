@@ -7,4 +7,5 @@ public interface IWatchRecordsRepository
     Task PatchWatchRecord(int id, WatchRecord watchRecord);
     Task SetDateBorrowedToNull(int id);
     Task<int> DeleteWatchRecord(int id);
+    Task<int> GetWatchRecordsCount();
 }
