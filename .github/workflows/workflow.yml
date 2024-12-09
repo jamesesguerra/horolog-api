@@ -1,0 +1,32 @@
+name: horolog API
+on:
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: "horolog"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore ./horolog-api/horolog-api.csproj
+
+      - name: Build
+        run: dotnet build ./horolog-api/horolog-api.csproj -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ./horolog-api/horolog-api.csproj -o ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_SECRET }}
+          package: ./publish
