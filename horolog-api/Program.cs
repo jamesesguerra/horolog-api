@@ -1,8 +1,7 @@
 using System.Text;
-using horolog_api.Data;
+using horolog_api.Extensions;
 using horolog_api.Features.Brands;
 using horolog_api.Features.Files;
-using horolog_api.Features.Tokens;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
@@ -21,18 +20,7 @@ builder.Services.AddAzureClients(azureBuilder =>
     azureBuilder.AddBlobServiceClient(builder.Configuration.GetConnectionString("BlobStorage"));
 });
 
-builder.Services.AddSingleton<IDbContext, DbContext>();
-builder.Services.AddSingleton<IBrandsRepository, BrandsRepository>();
-builder.Services.AddSingleton<IBrandsService, BrandsService>();
-builder.Services.AddSingleton<IWatchModelsRepository, WatchModelsRepository>();
-builder.Services.AddSingleton<IWatchModelsService, WatchModelsService>();
-builder.Services.AddSingleton<IWatchRecordsRepository, WatchRecordsRepository>();
-builder.Services.AddSingleton<IWatchRecordsService, WatchRecordsService>();
-builder.Services.AddSingleton<IUsersRepository, UsersRepository>();
-builder.Services.AddSingleton<IUsersService, UsersService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddSingleton<IWatchReportsRepository, WatchReportsRepository>();
-builder.Services.AddSingleton<IWatchReportsService, WatchReportsService>();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -48,11 +36,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-// builder.Services.AddAntiforgery();
 
 var allowedOrigins = builder.Environment.IsDevelopment()
     ? new[] { "http://localhost:4200" }
-    : new[] { "" };
+    : new[] { "https://horolog.vercel.app" };
 
 builder.Services.AddCors(options =>
 {
@@ -85,5 +72,4 @@ app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
-// app.UseAntiforgery();
 app.Run();
