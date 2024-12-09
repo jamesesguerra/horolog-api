@@ -1,18 +1,25 @@
 using System.Text;
 using horolog_api.Data;
 using horolog_api.Features.Brands;
+using horolog_api.Features.Files;
 using horolog_api.Features.Tokens;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAzureClients(azureBuilder =>
+{
+    azureBuilder.AddBlobServiceClient(builder.Configuration.GetConnectionString("BlobStorage"));
+});
 
 builder.Services.AddSingleton<IDbContext, DbContext>();
 builder.Services.AddSingleton<IBrandsRepository, BrandsRepository>();
@@ -41,6 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+// builder.Services.AddAntiforgery();
 
 var allowedOrigins = builder.Environment.IsDevelopment()
     ? new[] { "http://localhost:4200" }
@@ -71,9 +79,11 @@ app.MapWatchModels();
 app.MapWatchRecords();
 app.MapWatchReports();
 app.MapUsers();
+app.MapFiles();
 
 app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
+// app.UseAntiforgery();
 app.Run();
