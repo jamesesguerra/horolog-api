@@ -30,6 +30,6 @@ public static class FilesEndpoints
             return Results.NoContent();
         });
         
-        return group;
+        return endpoints;
     }
 }

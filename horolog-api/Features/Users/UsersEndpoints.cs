@@ -53,6 +53,6 @@ public static class UsersEndpoints
             });
         });
 
-        return group;
+        return endpoints;
     }
 }

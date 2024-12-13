@@ -1,8 +1,9 @@
 using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace horolog_api.Data;
 
 public interface IDbContext
 {
-    IDbConnection CreateConnection();
+    SqlConnection CreateConnection();
 }

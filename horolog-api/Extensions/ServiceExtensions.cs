@@ -4,6 +4,7 @@ using horolog_api.Features.Tokens;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
+using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 
 namespace horolog_api.Extensions;
@@ -24,7 +25,9 @@ public static class ServiceExtensions
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IWatchReportsRepository, WatchReportsRepository>();
         services.AddSingleton<IWatchReportsService, WatchReportsService>();
-
+        services.AddSingleton<IWatchImagesRepository, WatchImagesRepository>();
+        services.AddSingleton<IWatchImagesService, WatchImagesService>();
+        
         return services;
     }
 }

@@ -5,6 +5,7 @@ using horolog_api.Features.Files;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
+using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Azure;
@@ -67,6 +68,7 @@ app.MapWatchRecords();
 app.MapWatchReports();
 app.MapUsers();
 app.MapFiles();
+app.MapWatchImages();
 
 app.UseCors("AllowSpecificOrigins");
 

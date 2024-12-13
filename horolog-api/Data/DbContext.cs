@@ -8,5 +8,5 @@ public class DbContext(IConfiguration configuration) : IDbContext
 {
     private readonly string _connectionString = configuration.GetConnectionString("DefaultConnection")!;
 
-    public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
+    public SqlConnection CreateConnection() => new SqlConnection(_connectionString);
 }
