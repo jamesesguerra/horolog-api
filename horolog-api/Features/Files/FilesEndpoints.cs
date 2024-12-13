@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace horolog_api.Features.Files;
 
@@ -24,6 +25,8 @@ public static class FilesEndpoints
 
         group.MapDelete("", async (BlobServiceClient service, string blobName) =>
         {
+            if (blobName.Length == 0) return Results.NoContent();
+            
             var container = service.GetBlobContainerClient("horolog");
             var client = container.GetBlobClient(blobName);
             await client.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);

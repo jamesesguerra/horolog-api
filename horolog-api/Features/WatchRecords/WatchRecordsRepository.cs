@@ -10,11 +10,17 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
     {
         using var connection = context.CreateConnection();
         
-        var sql = @" SELECT WR.Id, WR.ModelId, WR.ImageUrl, WR.Description, WR.Material, WR.DatePurchased,
+        var sql = @" SELECT WR.Id, WI.Uri AS ImageUrl, WR.ModelId, WR.Description, WR.Material, WR.DatePurchased,
                             WR.DateReceived, WR.DateSold, WR.DateBorrowed, WR.DateReturned, WR.ReferenceNumber,
                             WR.SerialNumber, WR.Location, WR.HasBox, WR.HasPapers, WR.Cost, WR.Remarks, WR.CreatedAt
                      FROM WatchRecord AS WR
-                     JOIN WatchModel WM ON WR.ModelId = WM.Id ";
+                     JOIN WatchModel WM ON WR.ModelId = WM.Id
+                     LEFT JOIN WatchImage WI ON WI.Id = (
+                        SELECT TOP 1 wInner.Id
+                        FROM WatchImage wInner
+                        WHERE wInner.RecordId = WR.Id
+                        ORDER BY wInner.Id ASC
+                     ) ";
 
         var queryBuilder = new StringBuilder(sql);
         if (modelId.HasValue) queryBuilder.Append(" WHERE WM.Id = @ModelId ");
@@ -28,13 +34,13 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         using var connection = context.CreateConnection();
         
         var sql = @" INSERT INTO WatchRecord (
-                        ModelId, ImageUrl, Description, Material, DatePurchased,
+                        ModelId, Description, Material, DatePurchased,
                         DateReceived, DateSold, ReferenceNumber, SerialNumber, 
                         Location, HasBox, HasPapers, Cost, Remarks, CreatedAt
                      )
                      OUTPUT INSERTED.Id
                      VALUES (
-                        @ModelId, @ImageUrl, @Description, @Material, @DatePurchased,
+                        @ModelId, @Description, @Material, @DatePurchased,
                         @DateReceived, @DateSold, @ReferenceNumber, @SerialNumber,
                         @Location, @HasBox, @HasPapers, @Cost, @Remarks, @CreatedAt
                      ) ";
@@ -43,7 +49,6 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         var id = await connection.ExecuteScalarAsync<int>(sql, new
         {
             watchRecord.ModelId,
-            watchRecord.ImageUrl,
             watchRecord.Description,
             watchRecord.Material,
             watchRecord.DatePurchased,
