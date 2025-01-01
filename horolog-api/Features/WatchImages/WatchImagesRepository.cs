@@ -38,4 +38,12 @@ public class WatchImagesRepository(IDbContext context) : IWatchImagesRepository
 
         return await connection.QueryAsync<WatchImage>(sql, new { Id = id });
     }
+
+    public async Task<int> DeleteWatchImage(int id)
+    {
+        using var connection = context.CreateConnection();
+        var sql = " DELETE FROM WatchImage WHERE ID = @Id ";
+        var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
+        return affectedRows;
+    }
 }

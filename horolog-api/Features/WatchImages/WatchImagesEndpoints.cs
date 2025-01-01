@@ -20,6 +20,12 @@ public static class WatchImagesEndpoints
             });
 
         group.MapGet("/", async (IWatchImagesService service, int recordId) => await service.GetWatchImagesByRecordId(recordId));
+
+        group.MapDelete("/{id}", async (IWatchImagesService service, int id) =>
+        {
+            var affectedRows = await service.DeleteWatchImage(id);
+            return affectedRows == 0 ? Results.Problem(statusCode: 404) : TypedResults.NoContent();
+        });
         
         return endpoints;
     }

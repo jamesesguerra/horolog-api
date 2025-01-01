@@ -11,4 +11,9 @@ public class WatchImagesService(IWatchImagesRepository repository) : IWatchImage
     {
         return await repository.GetWatchImagesByRecordId(id);
     }
+
+    public async Task<int> DeleteWatchImage(int id)
+    {
+        return await repository.DeleteWatchImage(id);
+    }
 }
