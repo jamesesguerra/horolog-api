@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddProblemDetails();
 builder.Services.AddAzureClients(azureBuilder =>
 {
     azureBuilder.AddBlobServiceClient(builder.Configuration.GetConnectionString("BlobStorage"));
