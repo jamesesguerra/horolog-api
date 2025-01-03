@@ -39,9 +39,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-var allowedOrigins = builder.Environment.IsDevelopment()
-    ? new[] { "http://localhost:4200" }
-    : new[] { "https://horolog.vercel.app" };
+var allowedOrigins = new[] { "http://localhost:4200", "https://horolog.vercel.app" };
 
 builder.Services.AddCors(options =>
 {
