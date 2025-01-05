@@ -8,6 +8,7 @@ using horolog_api.Features.Users;
 using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Components.Sections;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
@@ -39,13 +40,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-var allowedOrigins = new[] { "http://localhost:4200", "https://horolog.vercel.app" };
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", 
         policy => policy
-            .WithOrigins(allowedOrigins)
+            .WithOrigins(builder.Configuration["AllowedOrigins"]!)
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
