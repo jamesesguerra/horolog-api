@@ -8,7 +8,6 @@ using horolog_api.Features.Users;
 using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Sections;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
@@ -56,6 +55,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/error");
 }
 
 app.UseHttpsRedirection();
@@ -72,4 +76,6 @@ app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/error", () => Results.Problem());
 app.Run();
