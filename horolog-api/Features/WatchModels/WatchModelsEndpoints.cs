@@ -12,6 +12,8 @@ public static class WatchModelsEndpoints
 
         group.MapPost("/", (IWatchModelsService service, WatchModel watchModel) => service.AddWatchModel(watchModel));
 
+        group.MapGet("/independent-brands", (IWatchModelsService service) => service.GetIndependentBrandModelIds());
+
         return endpoints;
     }
 }

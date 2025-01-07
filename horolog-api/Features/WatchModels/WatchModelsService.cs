@@ -11,4 +11,9 @@ public class WatchModelsService(IWatchModelsRepository repository) : IWatchModel
     {
         return await repository.AddWatchModel(watchModel);
     }
+
+    public async Task<IEnumerable<int>> GetIndependentBrandModelIds()
+    {
+        return await repository.GetIndependentBrandModelIds();
+    }
 }

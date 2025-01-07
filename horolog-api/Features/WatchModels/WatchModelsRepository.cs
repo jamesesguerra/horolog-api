@@ -5,6 +5,22 @@ namespace horolog_api.Features.WatchModels;
 
 public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
 {
+    private static readonly List<string> IndependentBrands = new()
+    {
+        "Jaeger Lecoultre",
+        "Hublot",
+        "MB&F",
+        "Richard Mille",
+        "MCT",
+        "Urwerk",
+        "Blancpain",
+        "Franck Muller",
+        "DYW",
+        "Bell & Ross",
+        "Bulgari",
+        "Chopard"
+    };
+    
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
     {
         using var connection = context.CreateConnection();
@@ -35,5 +51,17 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         watchModel.CreatedAt = now;
 
         return watchModel;
+    }
+
+    public async Task<IEnumerable<int>> GetIndependentBrandModelIds()
+    {
+        using var connection = context.CreateConnection();
+        
+        var sql = @" SELECT WM.Id, B.Name
+                     FROM WatchModel WM
+                     JOIN Brand B ON WM.BrandId = B.Id
+                     WHERE B.Name IN @IndependentBrands ";
+        
+        return await connection.QueryAsync<int>(sql, new { IndependentBrands });
     }
 }
