@@ -24,7 +24,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
 
         var queryBuilder = new StringBuilder(sql);
         if (modelId.HasValue) queryBuilder.Append(" WHERE WM.Id = @ModelId ");
-        queryBuilder.Append(" ORDER BY WR.CreatedAt DESC ");
+        queryBuilder.Append(" ORDER BY WR.Description ASC ");
 
         return await connection.QueryAsync<WatchRecord>(queryBuilder.ToString(), new { ModelId = modelId });
     }
