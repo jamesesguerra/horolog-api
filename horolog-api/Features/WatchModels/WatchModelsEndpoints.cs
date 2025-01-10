@@ -1,19 +1,30 @@
+using Microsoft.Extensions.Caching.Memory;
+
 namespace horolog_api.Features.WatchModels;
 
 public static class WatchModelsEndpoints
 {
-    public static IEndpointRouteBuilder MapWatchModels(this IEndpointRouteBuilder endpoints)
+    public static void MapWatchModels(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/watch-models")
             .WithTags("Watch Models")
             .WithOpenApi();
 
-        group.MapGet("/", (IWatchModelsService service, int brandId) => service.GetWatchModelsByBrandId(brandId));
+        group.MapGet("/", async (IWatchModelsService service, int brandId, IMemoryCache memoryCache) =>
+        {
+            var cacheKey = $"models-{brandId}";
 
-        group.MapPost("/", (IWatchModelsService service, WatchModel watchModel) => service.AddWatchModel(watchModel));
+            if (!memoryCache.TryGetValue(cacheKey, out IEnumerable<WatchModel>? result))
+            {
+                result = await service.GetWatchModelsByBrandId(brandId);
+                memoryCache.Set(cacheKey, result, new TimeSpan(1, 0, 0, 0));
+            }
 
-        group.MapGet("/independent-brands", (IWatchModelsService service) => service.GetIndependentBrandModelIds());
+            return Results.Ok(result);
+        });
 
-        return endpoints;
+        group.MapPost("/", async (IWatchModelsService service, WatchModel watchModel) => await service.AddWatchModel(watchModel));
+
+        group.MapGet("/independent-brands", async (IWatchModelsService service) => await service.GetIndependentBrandModelIds());
     }
 }

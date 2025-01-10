@@ -66,6 +66,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     
     // caching
     services.AddResponseCaching();
+    services.AddMemoryCache();
 }
 
 static void ConfigureMiddleware(WebApplication app)
