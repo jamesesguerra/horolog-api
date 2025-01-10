@@ -1,19 +1,19 @@
+using horolog_api.Helpers;
+using Microsoft.AspNetCore.Mvc;
+
 namespace horolog_api.Features.Brands;
 
 public static class BrandsEndpoints
 {
-    public static IEndpointRouteBuilder MapBrands(this IEndpointRouteBuilder endpoints)
+    public static void MapBrands(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/brands")
             .WithTags("Brands")
-            .WithOpenApi();
+            .WithOpenApi()
+            .AddEndpointFilter(CacheHelper.AddDayCache);
 
-        group.MapGet("/", (IBrandsService service) => service.GetBrands());
+        group.MapGet("/", async (IBrandsService service) => await service.GetBrands());
 
-        group.MapGet("/{id}", (IBrandsService service, int id) => service.GetBrandById(id));
-
-        group.MapPost("/", async (IBrandsService service, Brand brand) => await service.AddBrand(brand));
-        
-        return endpoints;
+        group.MapGet("/{id}", async (IBrandsService service, int id) =>  await service.GetBrandById(id));
     }
 }

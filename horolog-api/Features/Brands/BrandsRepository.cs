@@ -27,23 +27,4 @@ public class BrandsRepository(IDbContext context) : IBrandsRepository
         var brand = await connection.QuerySingleOrDefaultAsync<Brand>(sql, new { Id = id });
         return brand;
     }
-
-    public async Task<Brand> AddBrand(Brand brand)
-    {
-        using var connection = context.CreateConnection();
-        
-        var sql = @" INSERT INTO Brand (Name, ImageUrl, CreatedAt)
-                     OUTPUT INSERTED.Id
-                     VALUES (@Name, @ImageUrl, @CreatedAt) ";
-
-        var now = DateTime.Now;
-        
-        var id = await connection.ExecuteScalarAsync<int>(sql, new 
-            { brand.Name, brand.ImageUrl, CreatedAt = now });
-
-        brand.Id = id;
-        brand.CreatedAt = now;
-
-        return brand;
-    }
 }

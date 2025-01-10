@@ -11,9 +11,4 @@ public class BrandsService(IBrandsRepository repository) : IBrandsService
     {
         return await repository.GetBrandById(id);
     }
-
-    public async Task<Brand> AddBrand(Brand brand)
-    {
-        return await repository.AddBrand(brand);
-    }
 }

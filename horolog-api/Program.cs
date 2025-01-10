@@ -8,74 +8,97 @@ using horolog_api.Features.Users;
 using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddProblemDetails();
-builder.Services.AddAzureClients(azureBuilder =>
-{
-    azureBuilder.AddBlobServiceClient(builder.Configuration.GetConnectionString("BlobStorage"));
-});
-
-builder.Services.AddApplicationServices();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        var tokenKey = builder.Configuration["TokenKey"] ?? throw new Exception("Cannot access token key");
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
-
-builder.Services.AddAuthorization();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigins", 
-        policy => policy
-            .WithOrigins(builder.Configuration["AllowedOrigins"]!)
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-});
+ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/error");
-}
+ConfigureMiddleware(app);
+ConfigureEndpoints(app);
 
-app.UseHttpsRedirection();
-
-app.MapBrands();
-app.MapWatchModels();
-app.MapWatchRecords();
-app.MapWatchReports();
-app.MapUsers();
-app.MapFiles();
-app.MapWatchImages();
-
-app.UseCors("AllowSpecificOrigins");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapGet("/error", () => Results.Problem());
 app.Run();
+
+static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+    services.AddProblemDetails();
+    
+    // azure
+    services.AddAzureClients(azureBuilder =>
+    {
+        azureBuilder.AddBlobServiceClient(configuration.GetConnectionString("BlobStorage"));
+    });
+    
+    // application services
+    services.AddApplicationServices();
+    
+    // authentication and authorization
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            var tokenKey = configuration["TokenKey"] ?? throw new Exception("Cannot access token key");
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+        });
+
+    services.AddAuthorization();
+    
+    // CORS
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigins", 
+            policy => policy
+                .WithOrigins(configuration["AllowedOrigins"]!)
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+    });
+    
+    // caching
+    services.AddResponseCaching();
+}
+
+static void ConfigureMiddleware(WebApplication app)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandler("/error");
+    }
+    
+    app.UseHttpsRedirection();
+    app.UseCors("AllowSpecificOrigins");
+    app.UseResponseCaching();
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
+
+static void ConfigureEndpoints(WebApplication app)
+{
+    // features
+    app.MapBrands();
+    app.MapWatchModels();
+    app.MapWatchRecords();
+    app.MapWatchReports();
+    app.MapUsers();
+    app.MapFiles();
+    app.MapWatchImages();
+    
+    // error handling endpoint
+    app.MapGet("/error", () => Results.Problem());
+}
