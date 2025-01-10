@@ -21,6 +21,7 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Chopard",
         "Girard-Perregaux",
         "Hermes",
+        "F.P. Journe"
     };
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
