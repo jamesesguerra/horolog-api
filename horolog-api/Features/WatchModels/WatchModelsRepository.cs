@@ -5,8 +5,8 @@ namespace horolog_api.Features.WatchModels;
 
 public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
 {
-    private static readonly List<string> IndependentBrands = new()
-    {
+    private static readonly List<string> IndependentBrands =
+    [
         "Jaeger Lecoultre",
         "Hublot",
         "MB&F",
@@ -21,8 +21,9 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Chopard",
         "Girard-Perregaux",
         "Hermes",
-        "F.P. Journe"
-    };
+        "F.P. Journe",
+        "Zenith"
+    ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
     {
