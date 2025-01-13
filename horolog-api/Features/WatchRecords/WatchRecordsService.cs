@@ -1,8 +1,11 @@
-using horolog_api.Features.WatchModels;
+using System.Text.Json;
+using Microsoft.Data.SqlClient;
 
 namespace horolog_api.Features.WatchRecords;
 
-public class WatchRecordsService(IWatchRecordsRepository repository) : IWatchRecordsService
+public class WatchRecordsService(
+    IWatchRecordsRepository repository,
+    ILogger<WatchRecordsService> logger) : IWatchRecordsService
 {
     public async Task<IEnumerable<WatchRecord>> GetWatchRecords(int? modelId)
     {
@@ -11,7 +14,15 @@ public class WatchRecordsService(IWatchRecordsRepository repository) : IWatchRec
 
     public async Task<WatchRecord> AddWatchRecord(WatchRecord watchRecord)
     {
-        return await repository.AddWatchRecord(watchRecord);
+        try
+        {
+            return await repository.AddWatchRecord(watchRecord);
+        }
+        catch (SqlException)
+        {
+            logger.LogError("Add watch record called with: {0}", JsonSerializer.Serialize(watchRecord));
+            throw;
+        }
     }
 
     public async Task PatchWatchRecord(int id, WatchRecord watchRecord)
