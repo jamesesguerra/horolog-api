@@ -16,6 +16,16 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// logging
+builder.Logging
+    .ClearProviders()
+    .AddSimpleConsole()
+    .AddDebug()
+    .AddApplicationInsights(
+        telemetry => telemetry.ConnectionString
+            = builder.Configuration["Azure:ApplicationInsights:ConnectionString"],
+        _ => { });
+
 ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
