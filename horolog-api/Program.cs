@@ -8,7 +8,9 @@ using horolog_api.Features.Users;
 using horolog_api.Features.WatchImages;
 using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
@@ -99,7 +101,38 @@ static void ConfigureEndpoints(WebApplication app)
     app.MapUsers();
     app.MapFiles();
     app.MapWatchImages();
-    
+
     // error handling endpoint
-    app.MapGet("/error", () => Results.Problem());
+    app.Map("/error", (HttpContext context) =>
+    {
+        var exceptionHandler = context.Features.Get<IExceptionHandlerPathFeature>();
+        var details = new ProblemDetails();
+    
+        details.Detail = exceptionHandler?.Error.Message;
+        details.Extensions["traceId"] = System.Diagnostics.Activity.Current?.Id ?? context.TraceIdentifier;
+    
+        if (exceptionHandler?.Error is TimeoutException)
+        {
+            details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.5";
+            details.Status = StatusCodes.Status504GatewayTimeout;
+        }
+        else if (exceptionHandler?.Error is SqlException)
+        {
+            app.Logger.LogError(context.Request.Body.ToString());
+            details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+            details.Status = StatusCodes.Status500InternalServerError;
+        }
+        else
+        {
+            details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+            details.Status = StatusCodes.Status500InternalServerError;
+        }
+    
+        app.Logger.LogError(
+            exceptionHandler?.Error,
+            "An unhandled error occured");
+        
+        return Results.Problem(details);
+    });
 }
+
