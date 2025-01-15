@@ -117,7 +117,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         foreach (var property in properties)
         {
             var value = property.GetValue(resource);
-            if (value == null || property.Name == "Id" || property.Name == "ModelId") continue;
+            if (value == null || property.Name == "Id") continue;
             var fieldName = property.Name;
             var paramName = $"@{fieldName}";
 
