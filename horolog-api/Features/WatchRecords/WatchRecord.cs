@@ -3,7 +3,7 @@ namespace horolog_api.Features.WatchRecords;
 public class WatchRecord
 {
     public int Id { get; set; }
-    public int ModelId { get; init; }
+    public int? ModelId { get; init; }
     public string? ImageUrl { get; init; }
     public string? Description { get; init; }
     public string? Material { get; init; }
