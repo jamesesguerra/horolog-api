@@ -12,6 +12,7 @@ public class WatchRecord
     public DateTime? DateSold { get; init; }
     public DateTime? DateBorrowed { get; init; }
     public DateTime? DateReturned { get; init; }
+    public DateTime? DatePickedUp { get; init; }
     public string? ReferenceNumber { get; init; }
     public string? SerialNumber { get; init; }
     public string? Location { get; init; }

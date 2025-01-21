@@ -11,8 +11,9 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         using var connection = context.CreateConnection();
         
         var sql = @" SELECT WR.Id, WI.Uri AS ImageUrl, WR.ModelId, WR.Description, WR.Material, WR.DatePurchased,
-                            WR.DateReceived, WR.DateSold, WR.DateBorrowed, WR.DateReturned, WR.ReferenceNumber,
-                            WR.SerialNumber, WR.Location, WR.HasBox, WR.HasPapers, WR.Cost, WR.Remarks, WR.CreatedAt
+                            WR.DateReceived, WR.DateSold, WR.DateBorrowed, WR.DateReturned, WR.DatePickedUp,
+                            WR.ReferenceNumber, WR.SerialNumber, WR.Location, WR.HasBox, WR.HasPapers, WR.Cost,
+                            WR.Remarks, WR.CreatedAt
                      FROM WatchRecord AS WR
                      JOIN WatchModel WM ON WR.ModelId = WM.Id
                      LEFT JOIN WatchImage WI ON WI.Id = (
