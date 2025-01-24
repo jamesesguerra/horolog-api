@@ -89,6 +89,13 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         await connection.ExecuteAsync(sql, new { Id = id });
     }
 
+    public async Task SetDateSoldToNull(int id)
+    {
+        using var connection = context.CreateConnection();
+        var sql = " UPDATE WatchRecord SET DateSold = NULL WHERE Id = @id ";
+        await connection.ExecuteAsync(sql, new { Id = id });
+    }
+
     public async Task<int> DeleteWatchRecord(int id)
     {
         using var connection = context.CreateConnection();

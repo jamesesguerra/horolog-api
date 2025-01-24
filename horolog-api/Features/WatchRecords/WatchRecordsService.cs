@@ -35,6 +35,11 @@ public class WatchRecordsService(
         await repository.SetDateBorrowedToNull(id);
     }
 
+    public async Task SetDateSoldToNull(int id)
+    {
+        await repository.SetDateSoldToNull(id);
+    }
+
     public async Task<int> DeleteWatchRecord(int id)
     {
         return await repository.DeleteWatchRecord(id);

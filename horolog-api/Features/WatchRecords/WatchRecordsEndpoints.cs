@@ -29,6 +29,13 @@ public static class WatchRecordsEndpoints
                 await service.SetDateBorrowedToNull(id);
                 return TypedResults.Ok();
             });
+        
+        group.MapPatch("/date-sold/{id:int}",
+            async (IWatchRecordsService service, int id) =>
+            {
+                await service.SetDateSoldToNull(id);
+                return TypedResults.Ok();
+            });
 
         group.MapDelete("/{id:int}", async (IWatchRecordsService service, int id) =>
         {
