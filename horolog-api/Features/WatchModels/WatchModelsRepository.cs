@@ -25,7 +25,8 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Zenith",
         "Breguet",
         "Glashutte",
-        "Edouard Koehn"
+        "Edouard Koehn",
+        "Greubel Forsey"
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
