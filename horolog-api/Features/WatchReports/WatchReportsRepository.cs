@@ -9,12 +9,13 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     {
         using var connection = context.CreateConnection();
 
-        var sql = @" SELECT TOP 5 B.Name AS BrandName, WM.Name AS ModelName, COUNT(WR.DateSold) AS SoldCount
+        var sql = @" SELECT B.Name AS BrandName, WM.Name AS ModelName, COUNT(WR.DateSold) AS SoldCount
                      FROM WatchRecord AS WR
                      JOIN WatchModel AS WM ON WR.ModelId = WM.Id
                      JOIN Brand AS B ON B.Id = WM.BrandId
                      GROUP BY WM.Name, B.Name
-                     ORDER BY COUNT(DateSold) DESC ";
+                     ORDER BY COUNT(DateSold) DESC
+                     LIMIT 5";
 
         var watches = await connection.QueryAsync<WatchSalesReportDto>(sql);
         return watches;

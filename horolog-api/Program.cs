@@ -1,4 +1,6 @@
+using System.Data.Common;
 using System.Text;
+using horolog_api.Data;
 using horolog_api.Extensions;
 using horolog_api.Features.Brands;
 using horolog_api.Features.Files;
@@ -10,7 +12,6 @@ using horolog_api.Features.WatchReports;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,6 +30,9 @@ builder.Logging
 ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+DbInitializer.Initialize(connectionString);
 
 ConfigureMiddleware(app);
 ConfigureEndpoints(app);
@@ -65,7 +69,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
         });
 
     services.AddAuthorization();
-    
+
     // CORS
     services.AddCors(options =>
     {
@@ -138,7 +142,7 @@ static void ConfigureEndpoints(WebApplication app)
             details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.5";
             details.Status = StatusCodes.Status504GatewayTimeout;
         }
-        else if (exceptionHandler?.Error is SqlException)
+        else if (exceptionHandler?.Error is DbConnection)
         {
             app.Logger.LogError(context.Request.Body.ToString());
             details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";

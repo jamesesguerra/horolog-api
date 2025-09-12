@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace horolog_api.Features.WatchRecords;
 
@@ -18,7 +18,7 @@ public class WatchRecordsService(
         {
             return await repository.AddWatchRecord(watchRecord);
         }
-        catch (SqlException)
+        catch (SqliteException)
         {
             logger.LogError("Add watch record called with: {0}", JsonSerializer.Serialize(watchRecord));
             throw;

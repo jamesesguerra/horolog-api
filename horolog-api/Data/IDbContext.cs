@@ -1,9 +1,8 @@
-using System.Data;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace horolog_api.Data;
 
 public interface IDbContext
 {
-    SqlConnection CreateConnection();
+    SqliteConnection CreateConnection();
 }

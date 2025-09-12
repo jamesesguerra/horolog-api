@@ -9,12 +9,11 @@ public class UsersRepository(IDbContext context) : IUsersRepository
     {
         using var connection = context.CreateConnection();
         
-        var sql = @" INSERT INTO [dbo].[User] (Username, PasswordHash, PasswordSalt)
-                     OUTPUT INSERTED.Id
-                     VALUES (@Username, @PasswordHash, @PasswordSalt) ";
+        var sql = @" INSERT INTO User (Username, PasswordHash, PasswordSalt)
+                     VALUES (@Username, @PasswordHash, @PasswordSalt);";
         
-        var id = await connection.ExecuteScalarAsync<int>(sql, user);
-        user.Id = id;
+        await connection.ExecuteAsync(sql, user);
+        user.Id = connection.ExecuteScalar<int>("SELECT last_insert_rowid();");
 
         return user;
     }
@@ -24,7 +23,7 @@ public class UsersRepository(IDbContext context) : IUsersRepository
         using var connection = context.CreateConnection();
 
         var sql = @" SELECT Id, Username, PasswordHash, PasswordSalt
-                     FROM [dbo].[User]
+                     FROM User
                      WHERE Username = @Username ";
 
         return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Username = username });

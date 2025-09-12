@@ -31,7 +31,7 @@ public class WatchImagesRepository(IDbContext context) : IWatchImagesRepository
     {
         using var connection = context.CreateConnection();
         
-        var sql = @" SELECT Id, Uri
+        var sql = @" SELECT Id, RecordId, Uri
                      FROM WatchImage
                      WHERE RecordId = @Id
                      ORDER BY Id ";
@@ -42,7 +42,7 @@ public class WatchImagesRepository(IDbContext context) : IWatchImagesRepository
     public async Task<int> DeleteWatchImage(int id)
     {
         using var connection = context.CreateConnection();
-        var sql = " DELETE FROM WatchImage WHERE ID = @Id ";
+        var sql = " DELETE FROM WatchImage WHERE Id = @Id ";
         var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
         return affectedRows;
     }

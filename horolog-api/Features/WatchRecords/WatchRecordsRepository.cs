@@ -17,10 +17,11 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
                      FROM WatchRecord AS WR
                      JOIN WatchModel WM ON WR.ModelId = WM.Id
                      LEFT JOIN WatchImage WI ON WI.Id = (
-                        SELECT TOP 1 wInner.Id
+                        SELECT wInner.Id
                         FROM WatchImage wInner
                         WHERE wInner.RecordId = WR.Id
                         ORDER BY wInner.Id ASC
+                        LIMIT 1
                      ) ";
 
         var queryBuilder = new StringBuilder(sql);
@@ -39,15 +40,14 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
                         DateReceived, DateSold, ReferenceNumber, SerialNumber, 
                         Location, HasBox, HasPapers, Cost, Remarks, CreatedAt
                      )
-                     OUTPUT INSERTED.Id
                      VALUES (
                         @ModelId, @Description, @Material, @DatePurchased,
                         @DateReceived, @DateSold, @ReferenceNumber, @SerialNumber,
                         @Location, @HasBox, @HasPapers, @Cost, @Remarks, @CreatedAt
-                     ) ";
+                     )";
 
         var now = DateTime.Now;
-        var id = await connection.ExecuteScalarAsync<int>(sql, new
+        await connection.ExecuteScalarAsync<int>(sql, new
         {
             watchRecord.ModelId,
             watchRecord.Description,
@@ -65,7 +65,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
             CreatedAt = now
         });
 
-        watchRecord.Id = id;
+        var id = await connection.ExecuteScalarAsync<int>("SELECT last_insert_rowid();");
         watchRecord.CreatedAt = now;
         return watchRecord;
     }
@@ -85,21 +85,21 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
     public async Task SetDateBorrowedToNull(int id)
     {
         using var connection = context.CreateConnection();
-        var sql = " UPDATE WatchRecord SET DateBorrowed = NULL WHERE Id = @id";
+        var sql = " UPDATE WatchRecord SET DateBorrowed = NULL WHERE Id = @Id";
         await connection.ExecuteAsync(sql, new { Id = id });
     }
 
     public async Task SetDateSoldToNull(int id)
     {
         using var connection = context.CreateConnection();
-        var sql = " UPDATE WatchRecord SET DateSold = NULL WHERE Id = @id ";
+        var sql = " UPDATE WatchRecord SET DateSold = NULL WHERE Id = @Id ";
         await connection.ExecuteAsync(sql, new { Id = id });
     }
 
     public async Task<int> DeleteWatchRecord(int id)
     {
         using var connection = context.CreateConnection();
-        var sql = " DELETE FROM WatchRecord WHERE ID = @Id ";
+        var sql = " DELETE FROM WatchRecord WHERE Id = @Id ";
         var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
         return affectedRows;
     }

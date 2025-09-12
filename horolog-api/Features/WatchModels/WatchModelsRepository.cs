@@ -47,14 +47,15 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
     {
         using var connection = context.CreateConnection();
 
-        var sql = @" INSERT INTO WatchModel (BrandId, Name, CreatedAt)
-                     OUTPUT INSERTED.Id
-                     VALUES (@BrandId, @Name, @CreatedAt) ";
+        var sql = @"INSERT INTO WatchModel (BrandId, Name, CreatedAt)
+            VALUES (@BrandId, @Name, @CreatedAt) ";
         
         var now = DateTime.Now;
         
-        var id = await connection.ExecuteScalarAsync<int>(sql, new 
+        await connection.ExecuteScalarAsync(sql, new 
             { watchModel.BrandId, watchModel.Name, CreatedAt = now });
+
+        var id = await connection.ExecuteScalarAsync<int>("SELECT last_insert_rowid();");
 
         watchModel.Id = id;
         watchModel.CreatedAt = now;

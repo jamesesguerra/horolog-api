@@ -9,8 +9,8 @@ public static class BrandsEndpoints
     {
         var group = endpoints.MapGroup("api/brands")
             .WithTags("Brands")
-            .WithOpenApi()
-            .AddEndpointFilter(CacheHelper.AddDayCache);
+            .WithOpenApi();
+            // .AddEndpointFilter(CacheHelper.AddDayCache);
 
         group.MapGet("/", async (IBrandsService service) => await service.GetBrands());
 
