@@ -66,6 +66,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         });
 
         var id = await connection.ExecuteScalarAsync<int>("SELECT last_insert_rowid();");
+        watchRecord.Id = id;
         watchRecord.CreatedAt = now;
         return watchRecord;
     }

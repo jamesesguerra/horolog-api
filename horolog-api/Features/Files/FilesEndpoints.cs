@@ -1,6 +1,6 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Minio;
+using Minio.DataModel.Args;
 
 namespace horolog_api.Features.Files;
 
@@ -11,25 +11,33 @@ public static class FilesEndpoints
         var group = endpoints.MapGroup("api/files")
             .WithTags("Files");
 
-        group.MapPost("", async (BlobServiceClient service, IFormFile blob) =>
+        group.MapPost("", async ([FromServices] IMinioClient minio, IFormFile blob) =>
         {
-            var container = service.GetBlobContainerClient("horolog");
-            var client = container.GetBlobClient(blob.FileName);
-            var contentType = blob.ContentType;
-            var blobHttpHeaders = new BlobHttpHeaders() { ContentType = contentType };
-            await using var fileStream = blob.OpenReadStream();
-            await client.UploadAsync(fileStream, blobHttpHeaders);
+            var bucketName = "horolog";
+            var objectName = blob.FileName;
 
-            return Results.Ok(new { Uri = client.Uri.AbsoluteUri });
+            await using var fileStream = blob.OpenReadStream();
+            await minio.PutObjectAsync(new PutObjectArgs()
+                .WithBucket(bucketName)
+                .WithObject(objectName)
+                .WithStreamData(fileStream)
+                .WithObjectSize(blob.Length)
+                .WithContentType(blob.ContentType));
+
+            var url = $"/{bucketName}/{objectName}";
+            return Results.Ok(new { Uri = url });
         }).DisableAntiforgery();
 
-        group.MapDelete("", async (BlobServiceClient service, string blobName) =>
+        group.MapDelete("", async ([FromServices] IMinioClient minio, string blobName) =>
         {
-            if (blobName.Length == 0) return Results.NoContent();
-            
-            var container = service.GetBlobContainerClient("horolog");
-            var client = container.GetBlobClient(blobName);
-            await client.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+            if (string.IsNullOrWhiteSpace(blobName)) return Results.NoContent();
+    
+            var bucketName = "horolog";
+
+            await minio.RemoveObjectAsync(new RemoveObjectArgs()
+                .WithBucket(bucketName)
+                .WithObject(blobName));
+
             return Results.NoContent();
         });
         

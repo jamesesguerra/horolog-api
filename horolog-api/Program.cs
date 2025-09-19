@@ -14,8 +14,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://0.0.0.0:5228");
 
 // logging
 builder.Logging
@@ -50,6 +52,15 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     {
         azureBuilder.AddBlobServiceClient(configuration.GetConnectionString("BlobStorage"));
     });
+
+    services.AddSingleton<IMinioClient>(sp =>
+    {
+        return new MinioClient()
+            .WithEndpoint("minio", 9000)
+            .WithCredentials(configuration["Minio:Username"], configuration["Minio:Password"])
+            .WithSSL(false)
+            .Build();
+    });
     
     // application services
     services.AddApplicationServices();
@@ -73,9 +84,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     // CORS
     services.AddCors(options =>
     {
-        options.AddPolicy("AllowSpecificOrigins", 
+        options.AddPolicy("AllowAll", 
             policy => policy
-                .WithOrigins(configuration["AllowedOrigins"]!)
+                .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
     });
@@ -110,8 +121,7 @@ static void ConfigureMiddleware(WebApplication app)
         });
     }
     
-    app.UseHttpsRedirection();
-    app.UseCors("AllowSpecificOrigins");
+    app.UseCors("AllowAll");
     app.UseResponseCaching();
     app.UseAuthentication();
     app.UseAuthorization();
