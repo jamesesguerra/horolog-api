@@ -17,5 +17,8 @@ public static class WatchReportsEndpoints
         group.MapGet("/total-value", async (IWatchReportsService service) => await service.GetTotalValue());
 
         group.MapGet("/average-value", async (IWatchReportsService service) => await service.GetAverageValue());
+
+        group.MapGet("/brand-watch-summary",
+            async (IWatchReportsService service) => await service.GetBrandWatchSummary());
     }
 }

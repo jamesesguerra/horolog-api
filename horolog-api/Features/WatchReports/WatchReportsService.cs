@@ -16,4 +16,9 @@ public class WatchReportsService(IWatchReportsRepository repository) : IWatchRep
     {
         return await repository.GetAverageValue();
     }
+
+    public async Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary()
+    {
+        return await repository.GetBrandWatchSummary();
+    }
 }

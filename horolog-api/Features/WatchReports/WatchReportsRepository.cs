@@ -36,4 +36,31 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
         
         return await connection.ExecuteScalarAsync<long>(sql);
     }
+
+    public async Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary()
+    {
+        await using var connection = context.CreateConnection();
+        var sql = @"
+                SELECT
+                    B.Name AS Brand,
+                    COUNT(WR.Id) AS Quantity,
+                    SUM(WR.Cost) AS TotalCost
+                FROM Brand B
+                INNER JOIN WatchModel WM ON B.Id = WM.BrandId
+                INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
+                GROUP BY B.Name
+                ORDER BY B.Name
+
+                UNION ALL
+
+                SELECT
+                    'ALL BRANDS' AS Brand,
+                    COUNT(WR.Id) AS Quantity,
+                    SUM(WR.Cost) AS TotalCost
+                FROM Brand B
+                INNER JOIN WatchModel WM ON B.Id = WM.BrandId
+                INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id; ";
+
+        return await connection.QueryAsync<BrandWatchSummaryDto>(sql);
+    }
 }
