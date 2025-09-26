@@ -2,7 +2,7 @@ name: horolog API
 on:
   push:
     branches:
-      - feature/sqlite-migration
+      - main
   workflow_dispatch:
 
 env:
