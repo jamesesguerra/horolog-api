@@ -41,25 +41,37 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     {
         await using var connection = context.CreateConnection();
         var sql = @"
-                SELECT
-                    B.Name AS Brand,
-                    COUNT(WR.Id) AS Quantity,
-                    SUM(WR.Cost) AS TotalCost
-                FROM Brand B
-                INNER JOIN WatchModel WM ON B.Id = WM.BrandId
-                INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
-                GROUP BY B.Name
-                ORDER BY B.Name
+               WITH BrandSummary AS (
+            SELECT 
+                B.Name AS Brand,
+                COUNT(WR.Id) AS Quantity,
+                SUM(CASE WHEN WR.IsConsigned = 1 THEN 0 ELSE WR.Cost END) AS TotalCost,
+                SUM(CASE WHEN WR.IsConsigned = 1 THEN 1 ELSE 0 END) AS ConsignedCount
+            FROM Brand B
+            INNER JOIN WatchModel WM ON B.Id = WM.BrandId
+            INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
+            WHERE WR.DateSold IS NULL
+            GROUP BY B.Name
+        )
+        SELECT 
+            Brand,
+            Quantity,
+            TotalCost
+        FROM BrandSummary
+        WHERE NOT (Quantity = 1 AND ConsignedCount = 1)
 
-                UNION ALL
+        UNION ALL
 
-                SELECT
-                    'ALL BRANDS' AS Brand,
-                    COUNT(WR.Id) AS Quantity,
-                    SUM(WR.Cost) AS TotalCost
-                FROM Brand B
-                INNER JOIN WatchModel WM ON B.Id = WM.BrandId
-                INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id; ";
+        SELECT 
+            'ALL BRANDS' AS Brand,
+            COUNT(WR.Id) AS Quantity,
+            SUM(CASE WHEN WR.IsConsigned = 1 THEN 0 ELSE WR.Cost END) AS TotalCost
+        FROM Brand B
+        INNER JOIN WatchModel WM ON B.Id = WM.BrandId
+        INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
+        WHERE WR.DateSold IS NULL
+
+        ORDER BY Brand; ";
 
         return await connection.QueryAsync<BrandWatchSummaryDto>(sql);
     }

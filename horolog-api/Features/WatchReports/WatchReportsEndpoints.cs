@@ -8,12 +8,11 @@ public static class WatchReportsEndpoints
     {
         var group = endpoints.MapGroup("api/watch-reports")
             .WithTags("Watch Reports")
-            .WithOpenApi()
-            .AddEndpointFilter(CacheHelper.AddDayCache);
+            .WithOpenApi();
 
         group.MapGet("/best-selling",
-            async (IWatchReportsService service) => await service.GetBestSellingWatches());
-        
+            async (IWatchReportsService service) => await service.GetBestSellingWatches()).AddEndpointFilter(CacheHelper.AddDayCache);;
+
         group.MapGet("/total-value", async (IWatchReportsService service) => await service.GetTotalValue());
 
         group.MapGet("/average-value", async (IWatchReportsService service) => await service.GetAverageValue());
