@@ -24,7 +24,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     public async Task<long> GetTotalValue()
     {
         using var connection = context.CreateConnection();
-        var sql = " SELECT SUM(Cost) FROM WatchRecord WHERE DateSold IS NULL ";
+        var sql = " SELECT SUM(Cost) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0";
         
         return await connection.ExecuteScalarAsync<long>(sql);
     }
