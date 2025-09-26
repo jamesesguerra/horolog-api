@@ -13,7 +13,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         var sql = @" SELECT WR.Id, WI.Uri AS ImageUrl, WR.ModelId, WR.Description, WR.Material, WR.DatePurchased,
                             WR.DateReceived, WR.DateSold, WR.DateBorrowed, WR.DateReturned, WR.DatePickedUp,
                             WR.ReferenceNumber, WR.SerialNumber, WR.Location, WR.HasBox, WR.HasPapers, WR.IsConsigned,
-                            WR.Cost, WR.Remarks, WR.CreatedAt
+                            WR.IsWatchVault, WR.Cost, WR.Remarks, WR.CreatedAt
                      FROM WatchRecord AS WR
                      JOIN WatchModel WM ON WR.ModelId = WM.Id
                      LEFT JOIN WatchImage WI ON WI.Id = (
@@ -26,7 +26,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
 
         var queryBuilder = new StringBuilder(sql);
         if (modelId.HasValue) queryBuilder.Append(" WHERE WM.Id = @ModelId ");
-        queryBuilder.Append(" ORDER BY WR.DateSold ASC, WR.Description ASC ");
+        queryBuilder.Append(" ORDER BY WR.DateSold ASC, WR.DateReturned ASC, WR.Description ASC ");
 
         return await connection.QueryAsync<WatchRecord>(queryBuilder.ToString(), new { ModelId = modelId });
     }

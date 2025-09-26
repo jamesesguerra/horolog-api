@@ -19,6 +19,7 @@ public class WatchRecord
     public bool? HasBox { get; init; }
     public bool? HasPapers { get; init; }
     public bool? IsConsigned { get; init; }
+    public bool? IsWatchVault { get; init; }
     public long? Cost { get; init; }
     public string? Remarks { get; init; }
     public DateTime? CreatedAt { get; set; }
