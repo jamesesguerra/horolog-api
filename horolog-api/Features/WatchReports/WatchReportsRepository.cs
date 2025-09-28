@@ -25,7 +25,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     {
         using var connection = context.CreateConnection();
         var sql = " SELECT SUM(Cost) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0";
-        
+
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
@@ -33,7 +33,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     {
         using var connection = context.CreateConnection();
         var sql = " SELECT AVG(Cost) FROM WatchRecord WHERE DateSold IS NULL ";
-        
+
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
@@ -74,5 +74,35 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
         ORDER BY Brand; ";
 
         return await connection.QueryAsync<BrandWatchSummaryDto>(sql);
+    }
+
+    public async Task<IEnumerable<MonthlySalesDto>> GetMonthlySales()
+    {
+        using var connection = context.CreateConnection();
+        var sql = @"
+            SELECT 
+                CASE strftime('%m', datesold)
+                    WHEN '01' THEN 'January'
+                    WHEN '02' THEN 'February'
+                    WHEN '03' THEN 'March'
+                    WHEN '04' THEN 'April'
+                    WHEN '05' THEN 'May'
+                    WHEN '06' THEN 'June'
+                    WHEN '07' THEN 'July'
+                    WHEN '08' THEN 'August'
+                    WHEN '09' THEN 'September'
+                    WHEN '10' THEN 'October'
+                    WHEN '11' THEN 'November'
+                    WHEN '12' THEN 'December'
+                END AS MonthName,
+                COUNT(*) AS TotalSold
+            FROM watchrecord
+            WHERE datesold IS NOT NULL
+            AND strftime('%Y', datesold) = strftime('%Y', 'now')
+            GROUP BY strftime('%m', datesold)
+            ORDER BY strftime('%m', datesold);
+        ";
+
+        return await connection.QueryAsync<MonthlySalesDto>(sql);
     }
 }

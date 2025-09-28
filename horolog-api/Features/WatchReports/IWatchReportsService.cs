@@ -6,4 +6,5 @@ public interface IWatchReportsService
     Task<long> GetTotalValue();
     Task<long> GetAverageValue();
     Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary();
+    Task<IEnumerable<MonthlySalesDto>> GetMonthlySales();
 }

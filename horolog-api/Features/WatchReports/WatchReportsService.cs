@@ -21,4 +21,9 @@ public class WatchReportsService(IWatchReportsRepository repository) : IWatchRep
     {
         return await repository.GetBrandWatchSummary();
     }
+
+    public async Task<IEnumerable<MonthlySalesDto>> GetMonthlySales()
+    {
+        return await repository.GetMonthlySales();
+    }
 }
