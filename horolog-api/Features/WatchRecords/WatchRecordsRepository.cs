@@ -80,22 +80,8 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         var dynamicParams = BuildDynamicPatchParams(watchRecord, queryBuilder);
         queryBuilder.Append(" WHERE Id = @id ");
         dynamicParams.Add("@id", id);
-        
+
         await connection.ExecuteAsync(queryBuilder.ToString(), dynamicParams);
-    }
-
-    public async Task SetDateBorrowedToNull(int id)
-    {
-        using var connection = context.CreateConnection();
-        var sql = " UPDATE WatchRecord SET DateBorrowed = NULL WHERE Id = @Id";
-        await connection.ExecuteAsync(sql, new { Id = id });
-    }
-
-    public async Task SetDateSoldToNull(int id)
-    {
-        using var connection = context.CreateConnection();
-        var sql = " UPDATE WatchRecord SET DateSold = NULL WHERE Id = @Id ";
-        await connection.ExecuteAsync(sql, new { Id = id });
     }
 
     public async Task<int> DeleteWatchRecord(int id)
@@ -114,6 +100,13 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         
         var count = await connection.ExecuteScalarAsync<int>(sql);
         return count;
+    }
+
+    public async Task SetFieldToNull(string fieldName, int id)
+    {
+        using var connection = context.CreateConnection();
+        var sql = $" UPDATE WatchRecord SET {fieldName} = NULL WHERE Id = @Id ";
+        await connection.ExecuteAsync(sql, new { FieldName = fieldName, Id = id });
     }
     
     #region private methods
@@ -135,7 +128,7 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
             dynamicParams.Add(paramName, value);
             isFirstParam = false;
         }
-        
+
         return dynamicParams;
     }
     #endregion

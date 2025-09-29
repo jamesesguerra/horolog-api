@@ -21,6 +21,6 @@ public static class WatchReportsEndpoints
             async (IWatchReportsService service) => await service.GetBrandWatchSummary());
             
         group.MapGet("/monthly-sales",
-            async (IWatchReportsService service) => await service.GetMonthlySales()).AddEndpointFilter(CacheHelper.AddDayCache);;
+            async (IWatchReportsService service) => await service.GetMonthlySales()).AddEndpointFilter(CacheHelper.AddDayCache);
     }
 }

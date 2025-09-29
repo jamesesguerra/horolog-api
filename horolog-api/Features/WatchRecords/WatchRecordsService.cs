@@ -30,16 +30,6 @@ public class WatchRecordsService(
         await repository.PatchWatchRecord(id, watchRecord);
     }
 
-    public async Task SetDateBorrowedToNull(int id)
-    {
-        await repository.SetDateBorrowedToNull(id);
-    }
-
-    public async Task SetDateSoldToNull(int id)
-    {
-        await repository.SetDateSoldToNull(id);
-    }
-
     public async Task<int> DeleteWatchRecord(int id)
     {
         return await repository.DeleteWatchRecord(id);
@@ -48,5 +38,10 @@ public class WatchRecordsService(
     public async Task<int> GetWatchRecordsCount()
     {
         return await repository.GetWatchRecordsCount();
+    }
+
+    public async Task SetFieldToNull(string fieldName, int id)
+    {
+        await repository.SetFieldToNull(fieldName, id);
     }
 }

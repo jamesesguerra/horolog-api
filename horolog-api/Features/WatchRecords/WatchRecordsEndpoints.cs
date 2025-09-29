@@ -23,17 +23,10 @@ public static class WatchRecordsEndpoints
             return TypedResults.Ok();
         });
 
-        group.MapPatch("/date-borrowed/{id:int}",
-            async (IWatchRecordsService service, int id) =>
+        group.MapPatch("/setFieldToNull/{id:int}",
+            async (IWatchRecordsService service, [FromQuery] string fieldName, int id) =>
             {
-                await service.SetDateBorrowedToNull(id);
-                return TypedResults.Ok();
-            });
-        
-        group.MapPatch("/date-sold/{id:int}",
-            async (IWatchRecordsService service, int id) =>
-            {
-                await service.SetDateSoldToNull(id);
+                await service.SetFieldToNull(fieldName, id);
                 return TypedResults.Ok();
             });
 
