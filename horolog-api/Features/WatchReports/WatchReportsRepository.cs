@@ -142,7 +142,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
     {
         using var connection = context.CreateConnection();
         var sql = @"
-            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NULL;
+            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0;
             SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NOT NULL;
             SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 1;
         ";
