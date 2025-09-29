@@ -6,4 +6,5 @@ public interface IWatchReportsRepository
     Task<WatchMetricsDto> GetWatchMetrics();
     Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary();
     Task<IEnumerable<MonthlySalesDto>> GetMonthlySales();
+    Task<IEnumerable<BrandInventoryCountDto>> GetBrandInventoryCount();
 }

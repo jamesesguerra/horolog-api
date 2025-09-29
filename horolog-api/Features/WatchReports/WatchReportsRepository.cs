@@ -116,4 +116,25 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
 
         return await connection.QueryAsync<MonthlySalesDto>(sql);
     }
+
+    public async Task<IEnumerable<BrandInventoryCountDto>> GetBrandInventoryCount()
+    {
+        using var connection = context.CreateConnection();
+        var sql = @"
+            SELECT 
+                b.Name AS BrandName,
+                COUNT(wr.Id) AS TotalCount
+            FROM Brand b
+            LEFT JOIN WatchModel wm ON wm.BrandId = b.Id
+            LEFT JOIN WatchRecord wr 
+                ON wr.ModelId = wm.Id 
+            AND wr.DateSold IS NULL 
+            AND wr.IsConsigned = 0
+            GROUP BY b.Id, b.Name
+            HAVING COUNT(wr.Id) > 0
+            ORDER BY TotalCount DESC;
+        ";
+
+        return await connection.QueryAsync<BrandInventoryCountDto>(sql);
+    }
 }
