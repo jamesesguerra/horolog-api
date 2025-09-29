@@ -13,9 +13,7 @@ public static class WatchReportsEndpoints
         group.MapGet("/best-selling",
             async (IWatchReportsService service) => await service.GetBestSellingWatches()).AddEndpointFilter(CacheHelper.AddDayCache);
 
-        group.MapGet("/total-value", async (IWatchReportsService service) => await service.GetTotalValue());
-
-        group.MapGet("/average-value", async (IWatchReportsService service) => await service.GetAverageValue()).AddEndpointFilter(CacheHelper.AddDayCache);;
+        group.MapGet("/watch-metrics", async (IWatchReportsService service) => await service.GetWatchMetrics()).AddEndpointFilter(CacheHelper.AddDayCache);
 
         group.MapGet("/brand-watch-summary",
             async (IWatchReportsService service) => await service.GetBrandWatchSummary());

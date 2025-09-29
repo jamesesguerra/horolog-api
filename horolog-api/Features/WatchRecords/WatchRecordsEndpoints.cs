@@ -36,8 +36,6 @@ public static class WatchRecordsEndpoints
             return affectedRows == 0 ? Results.Problem(statusCode: 404) : TypedResults.NoContent();
         });
 
-        group.MapGet("/count", async (IWatchRecordsService service) => await service.GetWatchRecordsCount());
-
         return endpoints;
     }
 }

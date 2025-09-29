@@ -92,16 +92,6 @@ public class WatchRecordsRepository(IDbContext context) : IWatchRecordsRepositor
         return affectedRows;
     }
 
-    public async Task<int> GetWatchRecordsCount()
-    {
-        using var connection = context.CreateConnection();
-        
-        var sql = " SELECT COUNT(*) FROM WatchRecord WHERE DateSold IS NULL AND DateBorrowed IS NULL ";
-        
-        var count = await connection.ExecuteScalarAsync<int>(sql);
-        return count;
-    }
-
     public async Task SetFieldToNull(string fieldName, int id)
     {
         using var connection = context.CreateConnection();

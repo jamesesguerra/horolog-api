@@ -35,11 +35,6 @@ public class WatchRecordsService(
         return await repository.DeleteWatchRecord(id);
     }
 
-    public async Task<int> GetWatchRecordsCount()
-    {
-        return await repository.GetWatchRecordsCount();
-    }
-
     public async Task SetFieldToNull(string fieldName, int id)
     {
         await repository.SetFieldToNull(fieldName, id);

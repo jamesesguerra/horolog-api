@@ -21,20 +21,31 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
         return watches;
     }
 
-    public async Task<long> GetTotalValue()
+    public async Task<WatchMetricsDto> GetWatchMetrics()
     {
         using var connection = context.CreateConnection();
-        var sql = " SELECT SUM(Cost) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0";
 
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
+        var sql = @"
+            SELECT COUNT(*) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0;
+            SELECT SUM(Cost) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 0;
+            SELECT AVG(Cost) FROM WatchRecord WHERE DateSold IS NULL;
+            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NOT NULL;
+        ";
 
-    public async Task<long> GetAverageValue()
-    {
-        using var connection = context.CreateConnection();
-        var sql = " SELECT AVG(Cost) FROM WatchRecord WHERE DateSold IS NULL ";
+        var multi = await connection.QueryMultipleAsync(sql);
 
-        return await connection.ExecuteScalarAsync<long>(sql);
+        var totalCount = await multi.ReadSingleAsync<int>();
+        var totalValue = await multi.ReadSingleAsync<long>();
+        var averageValue = await multi.ReadSingleAsync<long>();
+        var totalSold = await multi.ReadSingleAsync<int>();
+
+        return new WatchMetricsDto
+        {
+            TotalCount = totalCount,
+            TotalValue = totalValue,
+            AverageValue = averageValue,
+            TotalSold = totalSold
+        };
     }
 
     public async Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary()

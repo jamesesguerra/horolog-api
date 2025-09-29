@@ -7,5 +7,4 @@ public interface IWatchRecordsService
     Task PatchWatchRecord(int id, WatchRecord watchRecord);
     Task SetFieldToNull(string fieldName, int id);
     Task<int> DeleteWatchRecord(int id);
-    Task<int> GetWatchRecordsCount();
 }

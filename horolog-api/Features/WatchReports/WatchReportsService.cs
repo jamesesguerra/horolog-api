@@ -7,14 +7,9 @@ public class WatchReportsService(IWatchReportsRepository repository) : IWatchRep
         return await repository.GetBestSellingWatches();
     }
 
-    public async Task<long> GetTotalValue()
+    public async Task<WatchMetricsDto> GetWatchMetrics()
     {
-        return await repository.GetTotalValue();
-    }
-
-    public async Task<long> GetAverageValue()
-    {
-        return await repository.GetAverageValue();
+        return await repository.GetWatchMetrics();
     }
 
     public async Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary()
