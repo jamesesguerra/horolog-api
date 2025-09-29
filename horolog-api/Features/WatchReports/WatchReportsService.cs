@@ -26,4 +26,9 @@ public class WatchReportsService(IWatchReportsRepository repository) : IWatchRep
     {
         return await repository.GetBrandInventoryCount();
     }
+
+    public async Task<InventoryBreakdownDto> GetInventoryBreakdown()
+    {
+        return await repository.GetInventoryBreakdown();
+    }
 }

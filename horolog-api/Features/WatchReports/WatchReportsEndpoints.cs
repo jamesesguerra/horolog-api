@@ -23,5 +23,8 @@ public static class WatchReportsEndpoints
 
         group.MapGet("/brand-inventory-count",
             async (IWatchReportsService service) => await service.GetBrandInventoryCount()).AddEndpointFilter(CacheHelper.AddDayCache);
+
+        group.MapGet("/inventory-breakdown",
+            async (IWatchReportsService service) => await service.GetInventoryBreakdown()).AddEndpointFilter(CacheHelper.AddDayCache);
     }
 }

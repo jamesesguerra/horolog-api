@@ -137,4 +137,27 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
 
         return await connection.QueryAsync<BrandInventoryCountDto>(sql);
     }
+
+    public async Task<InventoryBreakdownDto> GetInventoryBreakdown()
+    {
+        using var connection = context.CreateConnection();
+        var sql = @"
+            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NULL;
+            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NOT NULL;
+            SELECT COUNT(Id) FROM WatchRecord WHERE DateSold IS NULL AND IsConsigned = 1;
+        ";
+
+        var multi = await connection.QueryMultipleAsync(sql);
+
+        var unsoldCount = await multi.ReadSingleAsync<int>();
+        var soldCount = await multi.ReadSingleAsync<int>();
+        var consignedCount = await multi.ReadSingleAsync<int>();
+
+        return new InventoryBreakdownDto
+        {
+            UnsoldCount = unsoldCount,
+            SoldCount = soldCount,
+            ConsignedCount = consignedCount
+        };
+    }
 }

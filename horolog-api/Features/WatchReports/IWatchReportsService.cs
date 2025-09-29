@@ -7,4 +7,5 @@ public interface IWatchReportsService
     Task<IEnumerable<BrandWatchSummaryDto>> GetBrandWatchSummary();
     Task<IEnumerable<MonthlySalesDto>> GetMonthlySales();
     Task<IEnumerable<BrandInventoryCountDto>> GetBrandInventoryCount();
+    Task<InventoryBreakdownDto> GetInventoryBreakdown();
 }
