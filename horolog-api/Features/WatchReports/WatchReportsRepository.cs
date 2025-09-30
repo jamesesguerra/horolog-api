@@ -93,18 +93,18 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
         var sql = @"
             SELECT 
                 CASE strftime('%m', datesold)
-                    WHEN '01' THEN 'January'
-                    WHEN '02' THEN 'February'
-                    WHEN '03' THEN 'March'
-                    WHEN '04' THEN 'April'
+                    WHEN '01' THEN 'Jan'
+                    WHEN '02' THEN 'Feb'
+                    WHEN '03' THEN 'Mar'
+                    WHEN '04' THEN 'Apr'
                     WHEN '05' THEN 'May'
-                    WHEN '06' THEN 'June'
-                    WHEN '07' THEN 'July'
-                    WHEN '08' THEN 'August'
-                    WHEN '09' THEN 'September'
-                    WHEN '10' THEN 'October'
-                    WHEN '11' THEN 'November'
-                    WHEN '12' THEN 'December'
+                    WHEN '06' THEN 'Jun'
+                    WHEN '07' THEN 'Jul'
+                    WHEN '08' THEN 'Aug'
+                    WHEN '09' THEN 'Sep'
+                    WHEN '10' THEN 'Oct'
+                    WHEN '11' THEN 'Nov'
+                    WHEN '12' THEN 'Dec'
                 END AS MonthName,
                 COUNT(*) AS TotalSold
             FROM watchrecord
