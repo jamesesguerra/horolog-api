@@ -160,4 +160,26 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
             ConsignedCount = consignedCount
         };
     }
+
+    public async Task<IEnumerable<BrandPriceTrendDto>> GetMonthlyBrandPriceTrend()
+    {
+        using var connection = context.CreateConnection();
+
+        var sql = @"
+            SELECT 
+                b.Name AS Brand,
+                strftime('%Y-%m', wr.DateSold) AS Month,
+                AVG(wr.Cost) AS AvgSellingPrice
+            FROM WatchRecord wr
+            JOIN WatchModel wm ON wr.ModelId = wm.Id
+            JOIN Brand b ON wm.BrandId = b.Id
+            WHERE wr.DateSold IS NOT NULL
+            AND wr.Cost IS NOT NULL
+            AND b.Name IN ('Rolex', 'Patek Philippe', 'Audemars Piguet', 'Cartier', 'IWC')
+            GROUP BY b.Name, Month
+            ORDER BY Month, b.Name;
+        ";
+
+        return await connection.QueryAsync<BrandPriceTrendDto>(sql);
+    }
 }

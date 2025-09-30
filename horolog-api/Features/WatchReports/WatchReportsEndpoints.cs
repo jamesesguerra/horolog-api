@@ -26,5 +26,8 @@ public static class WatchReportsEndpoints
 
         group.MapGet("/inventory-breakdown",
             async (IWatchReportsService service) => await service.GetInventoryBreakdown()).AddEndpointFilter(CacheHelper.AddDayCache);
+        
+        group.MapGet("/monthly-trend",
+            async (IWatchReportsService service) => await service.GetMonthlyBrandPriceTrend()).AddEndpointFilter(CacheHelper.AddDayCache);
     }
 }
