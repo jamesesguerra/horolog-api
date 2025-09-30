@@ -36,4 +36,9 @@ public class WatchReportsService(IWatchReportsRepository repository) : IWatchRep
     {
         return await repository.GetMonthlyBrandPriceTrend();
     }
+
+    public async Task<IEnumerable<BoxPapersDto>> GetBoxPapersStatus()
+    {
+        return await repository.GetBoxPapersStatus();
+    }
 }

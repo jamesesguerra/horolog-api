@@ -182,4 +182,32 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
 
         return await connection.QueryAsync<BrandPriceTrendDto>(sql);
     }
+
+    public async Task<IEnumerable<BoxPapersDto>> GetBoxPapersStatus()
+    {
+        using var connection = context.CreateConnection();
+
+        var sql = @"
+          SELECT 
+                CASE 
+                    WHEN HasBox = 1 AND HasPapers = 1 THEN 'Both'
+                    WHEN HasBox = 1 AND HasPapers = 0 THEN 'Box Only'
+                    WHEN HasBox = 0 AND HasPapers = 1 THEN 'Papers Only'
+                    ELSE 'None'
+                END AS Status,
+                COUNT(*) AS TotalCount
+            FROM WatchRecord
+            WHERE DateSold IS NULL
+            AND IsConsigned = 0
+            GROUP BY Status
+            ORDER BY CASE Status
+                WHEN 'Both' THEN 1
+                WHEN 'Box Only' THEN 2
+                WHEN 'Papers Only' THEN 3
+                WHEN 'None' THEN 4
+            END;
+        ";
+
+        return await connection.QueryAsync<BoxPapersDto>(sql);
+    }
 }
