@@ -61,7 +61,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
             FROM Brand B
             INNER JOIN WatchModel WM ON B.Id = WM.BrandId
             INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
-            WHERE WR.DateSold IS NULL
+            WHERE WR.DateSold IS NULL AND WR.DateReturned IS NULL
             GROUP BY B.Name
         )
         SELECT 
@@ -80,7 +80,7 @@ public class WatchReportsRepository(IDbContext context) : IWatchReportsRepositor
         FROM Brand B
         INNER JOIN WatchModel WM ON B.Id = WM.BrandId
         INNER JOIN WatchRecord WR ON WR.ModelId = WM.Id
-        WHERE WR.DateSold IS NULL
+        WHERE WR.DateSold IS NULL AND WR.DateReturned IS NULL
 
         ORDER BY Brand; ";
 
