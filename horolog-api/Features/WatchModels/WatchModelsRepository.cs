@@ -33,7 +33,8 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Kurono Tokyo",
         "Christopher Ward",
         "ArtyA",
-        "Louis Erard"
+        "Louis Erard",
+        "Kollokium Projekt"
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
