@@ -4,6 +4,7 @@ using horolog_api.Data;
 using horolog_api.Extensions;
 using horolog_api.Features.Brands;
 using horolog_api.Features.Files;
+using horolog_api.Features.Search;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
 using horolog_api.Features.Users;
@@ -137,6 +138,7 @@ static void ConfigureEndpoints(WebApplication app)
     app.MapUsers();
     app.MapFiles();
     app.MapWatchImages();
+    app.MapSearch();
 
     // error handling endpoint
     app.Map("/error", (HttpContext context) =>

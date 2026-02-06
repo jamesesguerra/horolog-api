@@ -1,6 +1,3 @@
-using horolog_api.Helpers;
-using Microsoft.AspNetCore.Mvc;
-
 namespace horolog_api.Features.Brands;
 
 public static class BrandsEndpoints

@@ -1,5 +1,6 @@
 using horolog_api.Data;
 using horolog_api.Features.Brands;
+using horolog_api.Features.Search;
 using horolog_api.Features.Tokens;
 using horolog_api.Features.WatchModels;
 using horolog_api.Features.WatchRecords;
@@ -27,6 +28,8 @@ public static class ServiceExtensions
         services.AddSingleton<IWatchReportsService, WatchReportsService>();
         services.AddSingleton<IWatchImagesRepository, WatchImagesRepository>();
         services.AddSingleton<IWatchImagesService, WatchImagesService>();
+        services.AddSingleton<ISearchRepository, SearchRepository>();
+        services.AddSingleton<ISearchService, SearchService>();
         
         return services;
     }
