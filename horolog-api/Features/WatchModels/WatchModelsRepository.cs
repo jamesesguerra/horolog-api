@@ -37,7 +37,8 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Kollokium Projekt",
         "Bianchet",
         "DOXA",
-        "Alexander Shorokhoff"
+        "Alexander Shorokhoff",
+        "Trilobe"
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
