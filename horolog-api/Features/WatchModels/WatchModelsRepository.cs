@@ -41,7 +41,9 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Trilobe",
         "Ulysse Nardin",
         "Kudoke",
-        "Arnold & Son"
+        "Arnold & Son",
+        "GRØNE Oldenzaal",
+        "Delaloye Genève"
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
