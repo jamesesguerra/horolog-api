@@ -43,7 +43,8 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "Kudoke",
         "Arnold & Son",
         "GRØNE Oldenzaal",
-        "Delaloye Genève"
+        "Delaloye Genève",
+        "Breitling",
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
