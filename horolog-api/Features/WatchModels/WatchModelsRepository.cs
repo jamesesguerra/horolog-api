@@ -45,6 +45,8 @@ public class WatchModelsRepository(IDbContext context) : IWatchModelsRepository
         "GRØNE Oldenzaal",
         "Delaloye Genève",
         "Breitling",
+        "Gaga Laboratorio",
+        "Bamford"
     ];
     
     public async Task<IEnumerable<WatchModel>> GetWatchModelsByBrandId(int id)
