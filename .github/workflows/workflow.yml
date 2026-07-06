@@ -7,8 +7,8 @@ on:
 
 env:
   IMAGE_NAME: jamesesguerra025/horolog-api
-  STACK_NAME: horolog
-  STACK_FILE: /home/james/stacks/horolog/horolog-stack.yml
+  PROJECT_NAME: horolog
+  COMPOSE_FILE: /home/james/stacks/horolog/docker-compose.yml
 
 jobs:
   build:
@@ -35,7 +35,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Deploy stack to VM
+      - name: Deploy to VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
@@ -43,4 +43,4 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             docker pull ${{ env.IMAGE_NAME }}:latest
-            docker stack deploy -c ${{ env.STACK_FILE }} ${{ env.STACK_NAME }}
+            docker compose -f ${{ env.COMPOSE_FILE }} -p ${{ env.PROJECT_NAME }} up -d
