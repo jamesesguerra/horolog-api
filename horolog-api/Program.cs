@@ -57,9 +57,10 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddSingleton<IMinioClient>(sp =>
     {
         return new MinioClient()
-            .WithEndpoint("minio", 9000)
-            .WithCredentials(configuration["Minio:Username"], configuration["Minio:Password"])
-            .WithSSL(false)
+            .WithEndpoint(configuration["R2:Endpoint"])
+            .WithCredentials(configuration["R2:AccessKey"], configuration["R2:SecretKey"])
+            .WithRegion("auto")
+            .WithSSL(true)
             .Build();
     });
     
