@@ -6,9 +6,6 @@ namespace horolog_api.Features.Files;
 
 public static class FilesEndpoints
 {
-    private const string BucketName = "tabled-uploads";
-    private const string KeyPrefix = "horolog/";
-
     public static IEndpointRouteBuilder MapFiles(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/files")
@@ -16,11 +13,11 @@ public static class FilesEndpoints
 
         group.MapPost("", async ([FromServices] IMinioClient minio, IConfiguration configuration, IFormFile blob) =>
         {
-            var objectName = $"{KeyPrefix}{blob.FileName}";
+            var objectName = $"{R2Storage.KeyPrefix}{blob.FileName}";
 
             await using var fileStream = blob.OpenReadStream();
             await minio.PutObjectAsync(new PutObjectArgs()
-                .WithBucket(BucketName)
+                .WithBucket(R2Storage.BucketName)
                 .WithObject(objectName)
                 .WithStreamData(fileStream)
                 .WithObjectSize(blob.Length)
@@ -35,13 +32,10 @@ public static class FilesEndpoints
         {
             if (string.IsNullOrWhiteSpace(blobName)) return Results.NoContent();
 
-            var publicUrl = configuration["R2:PublicUrl"];
-            var objectName = blobName.StartsWith(publicUrl!)
-                ? blobName[publicUrl!.Length..].TrimStart('/')
-                : blobName.TrimStart('/');
+            var objectName = R2Storage.ResolveKey(blobName, configuration["R2:PublicUrl"]);
 
             await minio.RemoveObjectAsync(new RemoveObjectArgs()
-                .WithBucket(BucketName)
+                .WithBucket(R2Storage.BucketName)
                 .WithObject(objectName));
 
             return Results.NoContent();
